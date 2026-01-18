@@ -242,18 +242,20 @@ export default function AIRecommendations({ recommendations, onAccept, onReject,
                     </div>
 
                     {/* Actions */}
-                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                       <button className="btn btn-sm" style={{
-                        flex: 1, backgroundColor: '#DC2626', color: 'white',
-                        border: 'none', fontSize: '12px', padding: '8px 12px'
+                        backgroundColor: '#DC2626', color: 'white',
+                        border: 'none', fontSize: '11px', padding: '5px 10px',
+                        borderRadius: '5px', fontWeight: '500'
                       }}>
-                        {isRTL ? 'استبدال المدقق' : 'Replace Auditor'}
+                        {isRTL ? 'استبدال' : 'Replace'}
                       </button>
                       <button className="btn btn-sm" style={{
-                        flex: 1, backgroundColor: 'white', color: '#374151',
-                        border: '1px solid #D1D5DB', fontSize: '12px', padding: '8px 12px'
+                        backgroundColor: 'white', color: '#6B7280',
+                        border: '1px solid #E5E7EB', fontSize: '11px', padding: '5px 10px',
+                        borderRadius: '5px', fontWeight: '500'
                       }}>
-                        {isRTL ? 'مراجعة لاحقة' : 'Review Later'}
+                        {isRTL ? 'لاحقاً' : 'Later'}
                       </button>
                     </div>
                   </div>
