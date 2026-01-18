@@ -41,7 +41,7 @@ const generateMissions = () => {
     "HOS-001", "HOS-002",
   ];
 
-  const entityNames = {
+  const entityNamesAr = {
     "BNK-001": "مصرف ليبيا المركزي",
     "BNK-002": "مصرف الجمهورية",
     "BNK-003": "المصرف التجاري الوطني",
@@ -69,6 +69,45 @@ const generateMissions = () => {
     "UNI-002": "جامعة بنغازي",
     "HOS-001": "مركز طرابلس الطبي",
     "HOS-002": "مركز بنغازي الطبي",
+  };
+
+  const entityNamesEn = {
+    "BNK-001": "Central Bank of Libya",
+    "BNK-002": "Jumhouria Bank",
+    "BNK-003": "National Commercial Bank",
+    "BNK-004": "Wahda Bank",
+    "BNK-005": "Sahara Bank",
+    "OIL-001": "National Oil Corporation",
+    "OIL-002": "Waha Oil Company",
+    "OIL-003": "Arabian Gulf Oil Company",
+    "OIL-004": "Zueitina Oil Company",
+    "UTL-001": "General Electricity Company",
+    "UTL-002": "Water & Sewerage Company",
+    "UTL-003": "Libyan Telecom Company",
+    "SOV-001": "Libyan Investment Authority",
+    "SOV-002": "Foreign Investment Company",
+    "SOV-003": "Development & Reconstruction Fund",
+    "MIN-001": "Ministry of Finance",
+    "MIN-002": "Ministry of Oil & Gas",
+    "MIN-003": "Ministry of Education",
+    "MIN-004": "Ministry of Health",
+    "MIN-005": "Ministry of Interior",
+    "CRP-001": "Libyan Iron & Steel Company",
+    "CRP-002": "Libya Africa Investment",
+    "CRP-003": "Libyan Airlines",
+    "UNI-001": "University of Tripoli",
+    "UNI-002": "University of Benghazi",
+    "HOS-001": "Tripoli Medical Center",
+    "HOS-002": "Benghazi Medical Center",
+  };
+
+  const missionTypeLabelsEn = {
+    "financial": "Financial Audit",
+    "performance": "Performance Audit",
+    "compliance": "Compliance Review",
+    "pre_contract": "Pre-Contract Review",
+    "forensic": "Forensic Investigation",
+    "it_audit": "IT Systems Audit",
   };
 
   for (let i = 0; i < 110; i++) {
@@ -101,12 +140,13 @@ const generateMissions = () => {
 
     missions.push({
       id: `MIS-${year}-${String(i + 1).padStart(4, '0')}`,
-      titleAr: `${missionType.typeAr} - ${entityNames[entityId] || entityId}`,
-      titleEn: `${missionType.type.replace('_', ' ')} Audit - ${entityId}`,
+      titleAr: `${missionType.typeAr} - ${entityNamesAr[entityId] || entityId}`,
+      titleEn: `${missionTypeLabelsEn[missionType.type]} - ${entityNamesEn[entityId] || entityId}`,
       type: missionType.type,
       typeAr: missionType.typeAr,
       entityId,
-      entityNameAr: entityNames[entityId] || entityId,
+      entityNameAr: entityNamesAr[entityId] || entityId,
+      entityNameEn: entityNamesEn[entityId] || entityId,
       status: phase.id === "closed" ? "completed" : phase.id === "planning" ? "scheduled" : "in_progress",
       phase: phase.id,
       phaseAr: phase.nameAr,
@@ -138,14 +178,14 @@ export const missions = generateMissions();
 
 // Conflicts Data
 export const conflicts = [
-  { id: "CON-001", auditorId: "AUD-015", entityId: "BNK-003", conflictType: "rotation_violation", descriptionAr: "المدقق شارك في مهمة سابقة لهذا الكيان في 2023", severity: "high", aiDetected: true, aiConfidence: 96, resolution: "pending" },
-  { id: "CON-002", auditorId: "AUD-008", entityId: "SOV-001", conflictType: "family_relationship", descriptionAr: "قريب من الدرجة الأولى يعمل في الجهة المراد تدقيقها", severity: "critical", aiDetected: true, aiConfidence: 99, resolution: "blocked" },
-  { id: "CON-003", auditorId: "AUD-023", entityId: "BNK-002", conflictType: "financial_interest", descriptionAr: "المدقق لديه حساب مصرفي نشط في هذا المصرف", severity: "medium", aiDetected: true, aiConfidence: 88, resolution: "under_review" },
-  { id: "CON-004", auditorId: "AUD-032", entityId: "OIL-001", conflictType: "previous_employment", descriptionAr: "المدقق عمل سابقاً في المؤسسة خلال السنوات الخمس الماضية", severity: "high", aiDetected: true, aiConfidence: 94, resolution: "blocked" },
-  { id: "CON-005", auditorId: "AUD-010", entityId: "MIN-001", conflictType: "social_connection", descriptionAr: "المدقق عضو في لجنة مشتركة مع قيادات الوزارة", severity: "medium", aiDetected: true, aiConfidence: 82, resolution: "pending" },
-  { id: "CON-006", auditorId: "AUD-005", entityId: "OIL-002", conflictType: "rotation_violation", descriptionAr: "المدقق قاد مهمة تدقيق لنفس الكيان في 2022", severity: "high", aiDetected: true, aiConfidence: 97, resolution: "resolved" },
-  { id: "CON-007", auditorId: "AUD-018", entityId: "BNK-001", conflictType: "financial_interest", descriptionAr: "المدقق يمتلك استثمارات في هذا المصرف", severity: "critical", aiDetected: true, aiConfidence: 91, resolution: "blocked" },
-  { id: "CON-008", auditorId: "AUD-041", entityId: "UNI-002", conflictType: "family_relationship", descriptionAr: "زوج المدقق يعمل أستاذاً في الجامعة", severity: "high", aiDetected: true, aiConfidence: 95, resolution: "under_review" },
+  { id: "CON-001", auditorId: "AUD-015", auditorNameAr: "سلمى أحمد المقريف", auditorNameEn: "Salma Al-Maqrif", entityId: "BNK-003", entityNameAr: "المصرف التجاري الوطني", entityNameEn: "National Commercial Bank", conflictType: "rotation_violation", descriptionAr: "المدقق شارك في مهمة سابقة لهذا الكيان في 2023", severity: "high", aiDetected: true, aiConfidence: 96, resolution: "pending" },
+  { id: "CON-002", auditorId: "AUD-008", auditorNameAr: "يوسف إبراهيم القذافي", auditorNameEn: "Yousef Al-Gaddafi", entityId: "SOV-001", entityNameAr: "الهيئة الليبية للاستثمار", entityNameEn: "Libyan Investment Authority", conflictType: "family_relationship", descriptionAr: "قريب من الدرجة الأولى يعمل في الجهة المراد تدقيقها", severity: "critical", aiDetected: true, aiConfidence: 99, resolution: "blocked" },
+  { id: "CON-003", auditorId: "AUD-023", auditorNameAr: "سعاد خالد الجبالي", auditorNameEn: "Suad Al-Jibali", entityId: "BNK-002", entityNameAr: "مصرف الجمهورية", entityNameEn: "Jumhouria Bank", conflictType: "financial_interest", descriptionAr: "المدقق لديه حساب مصرفي نشط في هذا المصرف", severity: "medium", aiDetected: true, aiConfidence: 88, resolution: "under_review" },
+  { id: "CON-004", auditorId: "AUD-032", auditorNameAr: "منصور سالم الشلماني", auditorNameEn: "Mansour Al-Shalmani", entityId: "OIL-001", entityNameAr: "المؤسسة الوطنية للنفط", entityNameEn: "National Oil Corporation", conflictType: "previous_employment", descriptionAr: "المدقق عمل سابقاً في المؤسسة خلال السنوات الخمس الماضية", severity: "high", aiDetected: true, aiConfidence: 94, resolution: "blocked" },
+  { id: "CON-005", auditorId: "AUD-010", auditorNameAr: "عبدالله أحمد السنوسي", auditorNameEn: "Abdullah Al-Senussi", entityId: "MIN-001", entityNameAr: "وزارة المالية", entityNameEn: "Ministry of Finance", conflictType: "social_connection", descriptionAr: "المدقق عضو في لجنة مشتركة مع قيادات الوزارة", severity: "medium", aiDetected: true, aiConfidence: 82, resolution: "pending" },
+  { id: "CON-006", auditorId: "AUD-005", auditorNameAr: "عائشة مصطفى الطرابلسي", auditorNameEn: "Aisha Al-Tarabulsi", entityId: "OIL-002", entityNameAr: "شركة الواحة للنفط", entityNameEn: "Waha Oil Company", conflictType: "rotation_violation", descriptionAr: "المدقق قاد مهمة تدقيق لنفس الكيان في 2022", severity: "high", aiDetected: true, aiConfidence: 97, resolution: "resolved" },
+  { id: "CON-007", auditorId: "AUD-018", auditorNameAr: "عبدالرحمن سالم الغرياني", auditorNameEn: "Abdulrahman Al-Gheryani", entityId: "BNK-001", entityNameAr: "مصرف ليبيا المركزي", entityNameEn: "Central Bank of Libya", conflictType: "financial_interest", descriptionAr: "المدقق يمتلك استثمارات في هذا المصرف", severity: "critical", aiDetected: true, aiConfidence: 91, resolution: "blocked" },
+  { id: "CON-008", auditorId: "AUD-041", auditorNameAr: "سهام علي الثني", auditorNameEn: "Siham Al-Thni", entityId: "UNI-002", entityNameAr: "جامعة بنغازي", entityNameEn: "University of Benghazi", conflictType: "family_relationship", descriptionAr: "زوج المدقق يعمل أستاذاً في الجامعة", severity: "high", aiDetected: true, aiConfidence: 95, resolution: "under_review" },
 ];
 
 // AI Recommendations Queue

@@ -1,13 +1,34 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/affectli-ai-iframe/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ديوان المحاسبة الليبي | لوحة التحكم</title>
+    <title>Libyan Audit Bureau | AI Dashboard</title>
+
+    <!-- Allow iframe embedding -->
+    <meta http-equiv="X-Frame-Options" content="ALLOWALL" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Iframe-friendly styles -->
+    <style>
+      /* Ensure full height in iframe */
+      html, body, #root {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      /* Hide scrollbar but allow scrolling (for cleaner iframe look) */
+      body::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

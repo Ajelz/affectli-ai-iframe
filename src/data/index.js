@@ -127,19 +127,33 @@ export const entities = [
 // Generate remaining entities to reach 100+
 const additionalEntities = [];
 const governmentOffices = [
-  "ديوان المحاسبة", "هيئة الرقابة الإدارية", "المجلس الأعلى للقضاء", "النيابة العامة",
-  "هيئة مكافحة الفساد", "جهاز الإحصاء والتعداد", "مصلحة الجمارك", "مصلحة الضرائب",
-  "الهيئة العامة للمعلومات", "مصلحة التسجيل العقاري", "هيئة الإسكان والمرافق",
-  "صندوق الضمان الاجتماعي", "الهيئة العامة للثقافة", "الهيئة العامة للشباب والرياضة",
-  "المؤسسة العامة للإعلام", "الهيئة العامة للسياحة", "هيئة المناطق الصناعية",
-  "الهيئة العامة للأوقاف", "المركز الوطني للمواصفات", "الهيئة العامة للبيئة"
+  { ar: "ديوان المحاسبة", en: "Audit Bureau" },
+  { ar: "هيئة الرقابة الإدارية", en: "Administrative Control Authority" },
+  { ar: "المجلس الأعلى للقضاء", en: "Supreme Judicial Council" },
+  { ar: "النيابة العامة", en: "Public Prosecution Office" },
+  { ar: "هيئة مكافحة الفساد", en: "Anti-Corruption Commission" },
+  { ar: "جهاز الإحصاء والتعداد", en: "Statistics & Census Bureau" },
+  { ar: "مصلحة الجمارك", en: "Customs Authority" },
+  { ar: "مصلحة الضرائب", en: "Tax Authority" },
+  { ar: "الهيئة العامة للمعلومات", en: "General Information Authority" },
+  { ar: "مصلحة التسجيل العقاري", en: "Real Estate Registry" },
+  { ar: "هيئة الإسكان والمرافق", en: "Housing & Utilities Authority" },
+  { ar: "صندوق الضمان الاجتماعي", en: "Social Security Fund" },
+  { ar: "الهيئة العامة للثقافة", en: "General Culture Authority" },
+  { ar: "الهيئة العامة للشباب والرياضة", en: "Youth & Sports Authority" },
+  { ar: "المؤسسة العامة للإعلام", en: "Public Media Corporation" },
+  { ar: "الهيئة العامة للسياحة", en: "Tourism Authority" },
+  { ar: "هيئة المناطق الصناعية", en: "Industrial Zones Authority" },
+  { ar: "الهيئة العامة للأوقاف", en: "Endowments Authority" },
+  { ar: "المركز الوطني للمواصفات", en: "National Standards Center" },
+  { ar: "الهيئة العامة للبيئة", en: "Environmental Protection Agency" },
 ];
 
-governmentOffices.forEach((name, idx) => {
+governmentOffices.forEach((office, idx) => {
   additionalEntities.push({
     id: `GOV-${String(idx + 1).padStart(3, '0')}`,
-    nameAr: name,
-    nameEn: name,
+    nameAr: office.ar,
+    nameEn: office.en,
     sector: "government",
     sectorAr: "الهيئات الحكومية",
     riskScore: Math.floor(Math.random() * 15) + 5,

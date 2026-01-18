@@ -1,27 +1,26 @@
-import { useState } from 'react';
-import Header from './components/layout/Header';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { NavigationProvider, useNavigation } from './context/NavigationContext';
 import Sidebar from './components/layout/Sidebar';
-import ExecutiveSummary from './components/dashboard/ExecutiveSummary';
-import MissionKanban from './components/dashboard/MissionKanban';
-import AIRecommendations from './components/dashboard/AIRecommendations';
-import RiskHeatMap from './components/dashboard/RiskHeatMap';
-import TeamAllocation from './components/dashboard/TeamAllocation';
-import ActivityFeed from './components/dashboard/ActivityFeed';
+import Header from './components/layout/Header';
+import DashboardPage from './components/pages/DashboardPage';
+import MissionsPage from './components/pages/MissionsPage';
+import EntitiesPage from './components/pages/EntitiesPage';
+import TeamPage from './components/pages/TeamPage';
+import AIPage from './components/pages/AIPage';
+import ReportsPage from './components/pages/ReportsPage';
+import SettingsPage from './components/pages/SettingsPage';
 import { useDataSimulation } from './hooks/useDataSimulation';
 import { personnel, allEntities } from './data/index';
 import { missions, aiRecommendations, activityEvents, conflicts } from './data/missions';
 
-function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeView, setActiveView] = useState('dashboard');
-  const [selectedEntity, setSelectedEntity] = useState(null);
-  const [selectedMission, setSelectedMission] = useState(null);
+function AppContent() {
+  const { isRTL } = useLanguage();
+  const { activePage } = useNavigation();
 
   const {
     metrics,
     simulatedMissions,
     simulatedRecommendations,
-    simulatedEvents,
     acceptRecommendation,
     rejectRecommendation
   } = useDataSimulation({
@@ -32,62 +31,70 @@ function App() {
     personnel,
   });
 
+  const heroStats = {
+    activeMissions: simulatedMissions.filter(m => m.phase !== 'closed').length,
+    aiAcceptanceRate: metrics.aiAcceptanceRate,
+    highRiskEntities: allEntities.filter(e => e.riskLevel === 'critical' || e.riskLevel === 'high').length,
+    pendingReviews: simulatedRecommendations.filter(r => r.status === 'pending').length,
+  };
+
+  const renderPage = () => {
+    switch (activePage) {
+      case 'dashboard':
+        return (
+          <DashboardPage
+            heroStats={heroStats}
+            recommendations={simulatedRecommendations}
+            onAcceptRecommendation={acceptRecommendation}
+            onRejectRecommendation={rejectRecommendation}
+            conflicts={conflicts}
+          />
+        );
+      case 'missions':
+        return <MissionsPage missions={simulatedMissions} />;
+      case 'entities':
+        return <EntitiesPage entities={allEntities} />;
+      case 'team':
+        return <TeamPage personnel={personnel} />;
+      case 'ai':
+        return <AIPage recommendations={aiRecommendations} conflicts={conflicts} />;
+      case 'reports':
+        return <ReportsPage />;
+      case 'settings':
+        return <SettingsPage />;
+      default:
+        return (
+          <DashboardPage
+            heroStats={heroStats}
+            recommendations={simulatedRecommendations}
+            onAcceptRecommendation={acceptRecommendation}
+            onRejectRecommendation={rejectRecommendation}
+            conflicts={conflicts}
+          />
+        );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-100 flex">
-      <Sidebar
-        isOpen={sidebarOpen}
-        activeView={activeView}
-        onViewChange={setActiveView}
-      />
-
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'mr-64' : 'mr-16'}`}>
-        <Header
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          sidebarOpen={sidebarOpen}
-        />
-
-        <main className="flex-1 p-6 overflow-auto">
-          <ExecutiveSummary metrics={metrics} />
-
-          <div className="grid grid-cols-12 gap-6 mt-6">
-            <div className="col-span-12 xl:col-span-8">
-              <MissionKanban
-                missions={simulatedMissions}
-                personnel={personnel}
-                onMissionClick={setSelectedMission}
-              />
-            </div>
-
-            <div className="col-span-12 xl:col-span-4">
-              <AIRecommendations
-                recommendations={simulatedRecommendations}
-                onAccept={acceptRecommendation}
-                onReject={rejectRecommendation}
-                conflicts={conflicts}
-              />
-            </div>
-
-            <div className="col-span-12 lg:col-span-6">
-              <RiskHeatMap
-                entities={allEntities}
-                onEntityClick={setSelectedEntity}
-              />
-            </div>
-
-            <div className="col-span-12 lg:col-span-6">
-              <TeamAllocation
-                personnel={personnel}
-                missions={simulatedMissions}
-              />
-            </div>
-
-            <div className="col-span-12">
-              <ActivityFeed events={simulatedEvents} />
-            </div>
-          </div>
+    <div className={isRTL ? 'rtl' : 'ltr'}>
+      <Sidebar />
+      <div className="main-content">
+        <Header />
+        <main className="page-container">
+          {renderPage()}
         </main>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <NavigationProvider>
+        <AppContent />
+      </NavigationProvider>
+    </LanguageProvider>
   );
 }
 
