@@ -63,9 +63,9 @@ function RecommendationCard({ recommendation, onAccept, onReject, isRTL, t, inde
 
       {/* Impact Warning */}
       {(recommendation.impactAr || recommendation.impactEn) && (
-        <div className={`flex items-start gap-2 mb-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`} style={{ padding: '8px 12px', backgroundColor: '#FEF3C7', borderRadius: '6px' }}>
-          <AlertTriangle size={14} style={{ color: '#D97706', marginTop: '2px', flexShrink: 0 }} />
-          <span style={{ fontSize: '12px', color: '#92400E' }}>
+        <div className={`inline-flex items-start gap-2 mb-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`} style={{ padding: '6px 10px', backgroundColor: '#FEF3C7', borderRadius: '6px', borderLeft: isRTL ? 'none' : '3px solid #D97706', borderRight: isRTL ? '3px solid #D97706' : 'none' }}>
+          <AlertTriangle size={12} style={{ color: '#D97706', marginTop: '1px', flexShrink: 0 }} />
+          <span style={{ fontSize: '11px', color: '#92400E', lineHeight: '1.4' }}>
             {isRTL ? recommendation.impactAr : recommendation.impactEn}
           </span>
         </div>
@@ -161,25 +161,63 @@ export default function AIRecommendations({ recommendations, onAccept, onReject,
         {/* Conflicts */}
         {conflicts && conflicts.filter(c => c.resolution === 'pending').length > 0 && (
           <div className="mt-6 pt-6 border-t border-gray-100">
-            <h4 className={`text-sm font-medium text-red-600 mb-4 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <h4 className={`text-sm font-semibold text-red-600 mb-4 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <AlertTriangle size={16} />
-              {t('ai.conflictAlerts')}
+              {t('ai.conflictAlerts')} ({conflicts.filter(c => c.resolution === 'pending').length})
             </h4>
-            {conflicts.filter(c => c.resolution === 'pending').map((conflict) => (
-              <div
-                key={conflict.id}
-                className="p-4 bg-red-50 rounded-xl border border-red-100 mb-3"
-              >
-                <div className={`flex items-center gap-2 mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span className="text-xs font-semibold text-red-700">
-                    {conflict.aiConfidence}% {t('ai.confidence')}
-                  </span>
-                </div>
-                <p className="text-sm text-red-700">
-                  {isRTL ? conflict.descriptionAr : conflict.descriptionEn || conflict.descriptionAr}
-                </p>
-              </div>
-            ))}
+            <div className="space-y-3">
+              {conflicts.filter(c => c.resolution === 'pending').map((conflict) => {
+                const typeLabels = {
+                  rotation_violation: { ar: 'مخالفة دوران', en: 'Rotation Violation' },
+                  family_relationship: { ar: 'علاقة قرابة', en: 'Family Relationship' },
+                  financial_interest: { ar: 'مصلحة مالية', en: 'Financial Interest' },
+                  previous_employment: { ar: 'عمل سابق', en: 'Previous Employment' },
+                  social_connection: { ar: 'علاقة اجتماعية', en: 'Social Connection' },
+                };
+                const typeLabel = typeLabels[conflict.conflictType] || { ar: 'تضارب', en: 'Conflict' };
+                const severityColors = {
+                  critical: { bg: '#FEE2E2', border: '#FECACA', text: '#DC2626' },
+                  high: { bg: '#FEF3C7', border: '#FDE68A', text: '#D97706' },
+                  medium: { bg: '#FEF9C3', border: '#FEF08A', text: '#CA8A04' },
+                };
+                const colors = severityColors[conflict.severity] || severityColors.medium;
+
+                return (
+                  <div
+                    key={conflict.id}
+                    className="rounded-lg overflow-hidden"
+                    style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}` }}
+                  >
+                    {/* Header Row */}
+                    <div className={`flex items-center justify-between gap-3 px-3 py-2 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ borderBottom: `1px solid ${colors.border}` }}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ backgroundColor: colors.text + '20', color: colors.text }}>
+                          {isRTL ? typeLabel.ar : typeLabel.en}
+                        </span>
+                        <span className="text-xs font-medium" style={{ color: colors.text }}>
+                          {conflict.aiConfidence}%
+                        </span>
+                      </div>
+                      <span className="text-xs" style={{ color: colors.text }}>
+                        {isRTL ? conflict.entityNameAr : conflict.entityNameEn}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div className={`px-3 py-2 ${isRTL ? 'text-right' : ''}`}>
+                      <div className={`flex items-center gap-2 mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <span className="text-xs font-semibold" style={{ color: colors.text }}>
+                          {isRTL ? conflict.auditorNameAr : conflict.auditorNameEn}
+                        </span>
+                      </div>
+                      <p className="text-xs leading-relaxed" style={{ color: '#374151' }}>
+                        {isRTL ? conflict.descriptionAr : conflict.descriptionEn}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
