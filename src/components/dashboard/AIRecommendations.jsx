@@ -6,11 +6,12 @@ function RecommendationCard({ recommendation, onAccept, onReject, isRTL, t, inde
   const [isAccepting, setIsAccepting] = useState(false);
 
   const typeConfig = {
-    team_assignment: { icon: Users, label: 'Team Assignment' },
-    deadline_extension: { icon: Clock, label: 'Schedule' },
-    risk_escalation: { icon: AlertTriangle, label: 'Risk Alert' },
-    conflict_alert: { icon: AlertTriangle, label: 'Conflict' },
-    default: { icon: TrendingUp, label: 'Recommendation' },
+    team_assignment: { icon: Users, label: isRTL ? 'تعيين فريق' : 'Team Assignment', color: '#3B82F6' },
+    deadline_extension: { icon: Clock, label: isRTL ? 'تمديد موعد' : 'Deadline Extension', color: '#F59E0B' },
+    risk_escalation: { icon: AlertTriangle, label: isRTL ? 'رفع مخاطر' : 'Risk Escalation', color: '#EF4444' },
+    resource_optimization: { icon: Users, label: isRTL ? 'تحسين موارد' : 'Resource Transfer', color: '#8B5CF6' },
+    conflict_alert: { icon: AlertTriangle, label: isRTL ? 'تضارب مصالح' : 'Conflict Alert', color: '#DC2626' },
+    default: { icon: TrendingUp, label: isRTL ? 'توصية' : 'Recommendation', color: '#6B7280' },
   };
 
   const config = typeConfig[recommendation.type] || typeConfig.default;
@@ -30,24 +31,45 @@ function RecommendationCard({ recommendation, onAccept, onReject, isRTL, t, inde
       className={`rec-card animate-fade-in ${!isPending ? 'opacity-60' : ''}`}
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      {/* Header */}
+      {/* Header with type badge */}
       <div className={`rec-header ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div className="icon-box icon-box-sm">
+        <div className="icon-box icon-box-sm" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
           <Icon size={16} />
         </div>
         <div className="rec-content">
-          <h4 className="rec-title">
+          <div className={`flex items-center gap-2 mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ backgroundColor: `${config.color}15`, color: config.color }}>
+              {config.label}
+            </span>
+            <span className="text-xs text-secondary">
+              {new Date(recommendation.createdAt).toLocaleTimeString(isRTL ? 'ar-LY' : 'en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </span>
+          </div>
+          <h4 className="rec-title" style={{ fontSize: '14px', lineHeight: '1.4' }}>
             {isRTL ? recommendation.titleAr : recommendation.titleEn}
           </h4>
-          <p className="rec-meta">
-            {isRTL ? recommendation.entityAr || 'جهة' : recommendation.entity || 'Entity'} • {' '}
-            {new Date(recommendation.createdAt).toLocaleTimeString(isRTL ? 'ar-LY' : 'en-US', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
-          </p>
         </div>
       </div>
+
+      {/* Description */}
+      <div className="rec-description" style={{ margin: '12px 0', padding: '12px', backgroundColor: '#F9FAFB', borderRadius: '8px' }}>
+        <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#374151', margin: 0 }}>
+          {isRTL ? recommendation.descriptionAr : recommendation.descriptionEn}
+        </p>
+      </div>
+
+      {/* Impact Warning */}
+      {(recommendation.impactAr || recommendation.impactEn) && (
+        <div className={`flex items-start gap-2 mb-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`} style={{ padding: '8px 12px', backgroundColor: '#FEF3C7', borderRadius: '6px' }}>
+          <AlertTriangle size={14} style={{ color: '#D97706', marginTop: '2px', flexShrink: 0 }} />
+          <span style={{ fontSize: '12px', color: '#92400E' }}>
+            {isRTL ? recommendation.impactAr : recommendation.impactEn}
+          </span>
+        </div>
+      )}
 
       {/* Footer */}
       <div className={`rec-footer ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -60,15 +82,16 @@ function RecommendationCard({ recommendation, onAccept, onReject, isRTL, t, inde
             <button
               onClick={handleAccept}
               disabled={isAccepting}
-              className="btn btn-sm btn-primary"
+              className="btn btn-sm btn-success"
             >
               <Check size={14} />
               <span>{t('ai.accept')}</span>
             </button>
             <button
               onClick={() => onReject(recommendation.id, 'User skipped')}
-              className="btn btn-sm btn-secondary"
+              className="btn btn-sm btn-danger"
             >
+              <X size={14} />
               <span>{t('ai.skip')}</span>
             </button>
           </div>
