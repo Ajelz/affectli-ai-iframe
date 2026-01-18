@@ -124,15 +124,9 @@ export default function AIRecommendations({ recommendations, onAccept, onReject,
             <p className="card-subtitle">{pendingRecs.length} {t('ai.pendingReview')}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="live-indicator">
-            <span className="live-dot" />
-            <span>{t('hero.aiProcessing')}</span>
-          </div>
-          <button className="settings-btn">
-            <Settings size={16} />
-          </button>
-        </div>
+        <button className="settings-btn">
+          <Settings size={16} />
+        </button>
       </div>
 
       {/* Recommendations List */}
