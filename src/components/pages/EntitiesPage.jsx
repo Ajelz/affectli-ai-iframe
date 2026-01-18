@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Building2, Filter, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Building2, Filter, ChevronDown, AlertTriangle, Calendar, Users, MapPin, Banknote, GitBranch } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 const sectors = ['all', 'banking', 'oil_gas', 'utilities', 'ministry', 'sovereign', 'state_corp', 'education', 'healthcare'];
@@ -16,7 +16,18 @@ function RiskBar({ score, maxScore = 25 }) {
   );
 }
 
+function formatAssets(value, isRTL) {
+  if (value >= 1000000000) {
+    return `${(value / 1000000000).toFixed(1)}${isRTL ? ' مليار' : 'B'} LYD`;
+  } else if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(1)}${isRTL ? ' مليون' : 'M'} LYD`;
+  }
+  return `${value.toLocaleString()} LYD`;
+}
+
 function EntityCard({ entity, isRTL }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const riskColors = {
     critical: 'var(--color-danger)',
     high: '#F59E0B',
@@ -31,13 +42,36 @@ function EntityCard({ entity, isRTL }) {
     completed: isRTL ? 'مكتمل' : 'Completed',
   };
 
+  const regionLabels = {
+    tripoli: isRTL ? 'طرابلس' : 'Tripoli',
+    benghazi: isRTL ? 'بنغازي' : 'Benghazi',
+    misrata: isRTL ? 'مصراتة' : 'Misrata',
+    zawiya: isRTL ? 'الزاوية' : 'Zawiya',
+    sirte: isRTL ? 'سرت' : 'Sirte',
+    sebha: isRTL ? 'سبها' : 'Sebha',
+  };
+
   return (
-    <div className="entity-card">
+    <div
+      className={`entity-card ${isExpanded ? 'entity-card-expanded' : ''}`}
+      onClick={() => setIsExpanded(!isExpanded)}
+      style={{ cursor: 'pointer' }}
+    >
       <div className="entity-header">
         <h3 className="entity-name">{isRTL ? entity.nameAr : entity.nameEn}</h3>
-        {entity.riskLevel === 'critical' && (
-          <AlertTriangle size={16} className="text-danger" />
-        )}
+        <div className="flex items-center gap-2">
+          {entity.riskLevel === 'critical' && (
+            <AlertTriangle size={16} className="text-danger" />
+          )}
+          <ChevronDown
+            size={14}
+            style={{
+              color: '#9CA3AF',
+              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease'
+            }}
+          />
+        </div>
       </div>
       <p className="entity-sector">{isRTL ? entity.sectorAr : entity.sector}</p>
 
@@ -61,6 +95,65 @@ function EntityCard({ entity, isRTL }) {
           {entity.daysSinceAudit} {isRTL ? 'يوم' : 'days'}
         </span>
       </div>
+
+      {/* Expanded Details */}
+      {isExpanded && (
+        <div className="entity-details" onClick={(e) => e.stopPropagation()}>
+          <div className="entity-details-grid">
+            {entity.totalAssets && (
+              <div className={`detail-item ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Banknote size={14} className="detail-icon" />
+                <div>
+                  <span className="detail-label">{isRTL ? 'إجمالي الأصول' : 'Total Assets'}</span>
+                  <span className="detail-value">{formatAssets(entity.totalAssets, isRTL)}</span>
+                </div>
+              </div>
+            )}
+            {entity.employeeCount && (
+              <div className={`detail-item ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Users size={14} className="detail-icon" />
+                <div>
+                  <span className="detail-label">{isRTL ? 'الموظفون' : 'Employees'}</span>
+                  <span className="detail-value">{entity.employeeCount.toLocaleString()}</span>
+                </div>
+              </div>
+            )}
+            {entity.branches && (
+              <div className={`detail-item ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <GitBranch size={14} className="detail-icon" />
+                <div>
+                  <span className="detail-label">{isRTL ? 'الفروع' : 'Branches'}</span>
+                  <span className="detail-value">{entity.branches}</span>
+                </div>
+              </div>
+            )}
+            {entity.region && (
+              <div className={`detail-item ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <MapPin size={14} className="detail-icon" />
+                <div>
+                  <span className="detail-label">{isRTL ? 'المنطقة' : 'Region'}</span>
+                  <span className="detail-value">{regionLabels[entity.region] || entity.region}</span>
+                </div>
+              </div>
+            )}
+            {entity.lastAuditDate && (
+              <div className={`detail-item ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Calendar size={14} className="detail-icon" />
+                <div>
+                  <span className="detail-label">{isRTL ? 'آخر تدقيق' : 'Last Audit'}</span>
+                  <span className="detail-value">
+                    {new Date(entity.lastAuditDate).toLocaleDateString(isRTL ? 'ar-LY' : 'en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

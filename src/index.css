@@ -1250,6 +1250,55 @@ body {
 .status-tag.status-in_progress { background: #FEF3C7; color: #D97706; }
 .status-tag.status-completed { background: #D1FAE5; color: #059669; }
 
+/* Entity Card Expanded */
+.entity-card-expanded {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.entity-details {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.entity-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.detail-icon {
+  color: var(--color-icon);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.detail-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.detail-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
 /* ===== AUDITOR CARD ===== */
 .auditor-card {
   background: var(--color-card);
