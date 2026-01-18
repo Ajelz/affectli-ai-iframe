@@ -161,58 +161,100 @@ export default function AIRecommendations({ recommendations, onAccept, onReject,
         {/* Conflicts */}
         {conflicts && conflicts.filter(c => c.resolution === 'pending').length > 0 && (
           <div className="mt-6 pt-6 border-t border-gray-100">
-            <h4 className={`text-sm font-semibold text-red-600 mb-4 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <AlertTriangle size={16} />
-              {t('ai.conflictAlerts')} ({conflicts.filter(c => c.resolution === 'pending').length})
-            </h4>
-            <div className="space-y-3">
+            <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <h4 className={`text-sm font-semibold flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ color: '#991B1B' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <AlertTriangle size={14} style={{ color: '#DC2626' }} />
+                </div>
+                {isRTL ? 'تنبيهات تضارب المصالح' : 'Conflict Alerts'}
+              </h4>
+              <span style={{ fontSize: '11px', color: '#6B7280', backgroundColor: '#F3F4F6', padding: '4px 8px', borderRadius: '4px' }}>
+                {conflicts.filter(c => c.resolution === 'pending').length} {isRTL ? 'معلق' : 'pending'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {conflicts.filter(c => c.resolution === 'pending').map((conflict) => {
-                const typeLabels = {
-                  rotation_violation: { ar: 'مخالفة دوران', en: 'Rotation Violation' },
-                  family_relationship: { ar: 'علاقة قرابة', en: 'Family Relationship' },
-                  financial_interest: { ar: 'مصلحة مالية', en: 'Financial Interest' },
-                  previous_employment: { ar: 'عمل سابق', en: 'Previous Employment' },
-                  social_connection: { ar: 'علاقة اجتماعية', en: 'Social Connection' },
+                const typeConfig = {
+                  rotation_violation: { ar: 'مخالفة دوران', en: 'Rotation Rule', icon: '🔄' },
+                  family_relationship: { ar: 'علاقة قرابة', en: 'Family Tie', icon: '👥' },
+                  financial_interest: { ar: 'مصلحة مالية', en: 'Financial', icon: '💰' },
+                  previous_employment: { ar: 'عمل سابق', en: 'Ex-Employee', icon: '🏢' },
+                  social_connection: { ar: 'علاقة اجتماعية', en: 'Social Tie', icon: '🤝' },
                 };
-                const typeLabel = typeLabels[conflict.conflictType] || { ar: 'تضارب', en: 'Conflict' };
-                const severityColors = {
-                  critical: { bg: '#FEE2E2', border: '#FECACA', text: '#DC2626' },
-                  high: { bg: '#FEF3C7', border: '#FDE68A', text: '#D97706' },
-                  medium: { bg: '#FEF9C3', border: '#FEF08A', text: '#CA8A04' },
-                };
-                const colors = severityColors[conflict.severity] || severityColors.medium;
+                const config = typeConfig[conflict.conflictType] || { ar: 'تضارب', en: 'Conflict', icon: '⚠️' };
 
                 return (
                   <div
                     key={conflict.id}
-                    className="rounded-lg overflow-hidden"
-                    style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}` }}
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '10px',
+                      padding: '14px',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                    }}
                   >
-                    {/* Header Row */}
-                    <div className={`flex items-center justify-between gap-3 px-3 py-2 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ borderBottom: `1px solid ${colors.border}` }}>
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ backgroundColor: colors.text + '20', color: colors.text }}>
-                          {isRTL ? typeLabel.ar : typeLabel.en}
-                        </span>
-                        <span className="text-xs font-medium" style={{ color: colors.text }}>
-                          {conflict.aiConfidence}%
-                        </span>
+                    {/* Top: Auditor → Entity */}
+                    <div className={`flex items-center gap-2 mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div style={{
+                        width: '32px', height: '32px', borderRadius: '50%',
+                        backgroundColor: '#1A2032', color: 'white',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '12px', fontWeight: '600'
+                      }}>
+                        {(isRTL ? conflict.auditorNameAr : conflict.auditorNameEn).split(' ').map(n => n[0]).slice(0, 2).join('')}
                       </div>
-                      <span className="text-xs" style={{ color: colors.text }}>
-                        {isRTL ? conflict.entityNameAr : conflict.entityNameEn}
-                      </span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '13px', fontWeight: '600', color: '#111827' }}>
+                          {isRTL ? conflict.auditorNameAr : conflict.auditorNameEn}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#6B7280' }}>
+                          {isRTL ? 'مدقق' : 'Auditor'} → {isRTL ? conflict.entityNameAr : conflict.entityNameEn}
+                        </div>
+                      </div>
+                      <div style={{
+                        padding: '4px 8px', borderRadius: '6px',
+                        backgroundColor: conflict.severity === 'critical' ? '#FEE2E2' : '#FEF3C7',
+                        color: conflict.severity === 'critical' ? '#DC2626' : '#D97706',
+                        fontSize: '11px', fontWeight: '600'
+                      }}>
+                        {conflict.aiConfidence}%
+                      </div>
                     </div>
 
-                    {/* Content */}
-                    <div className={`px-3 py-2 ${isRTL ? 'text-right' : ''}`}>
+                    {/* Conflict Type & Description */}
+                    <div style={{
+                      backgroundColor: '#F9FAFB',
+                      borderRadius: '8px',
+                      padding: '10px 12px',
+                      marginBottom: '12px'
+                    }}>
                       <div className={`flex items-center gap-2 mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <span className="text-xs font-semibold" style={{ color: colors.text }}>
-                          {isRTL ? conflict.auditorNameAr : conflict.auditorNameEn}
+                        <span style={{ fontSize: '13px' }}>{config.icon}</span>
+                        <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151' }}>
+                          {isRTL ? config.ar : config.en}
                         </span>
                       </div>
-                      <p className="text-xs leading-relaxed" style={{ color: '#374151' }}>
+                      <p style={{ fontSize: '12px', color: '#4B5563', lineHeight: '1.5', margin: 0 }}>
                         {isRTL ? conflict.descriptionAr : conflict.descriptionEn}
                       </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <button className="btn btn-sm" style={{
+                        flex: 1, backgroundColor: '#DC2626', color: 'white',
+                        border: 'none', fontSize: '12px', padding: '8px 12px'
+                      }}>
+                        {isRTL ? 'استبدال المدقق' : 'Replace Auditor'}
+                      </button>
+                      <button className="btn btn-sm" style={{
+                        flex: 1, backgroundColor: 'white', color: '#374151',
+                        border: '1px solid #D1D5DB', fontSize: '12px', padding: '8px 12px'
+                      }}>
+                        {isRTL ? 'مراجعة لاحقة' : 'Review Later'}
+                      </button>
                     </div>
                   </div>
                 );
